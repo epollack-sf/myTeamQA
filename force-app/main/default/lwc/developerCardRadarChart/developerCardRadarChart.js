@@ -91,18 +91,10 @@ export default class DeveloperCardRadarChart extends LightningElement {
                 fillStyle: dataset.backgroundColor,
                 strokeStyle: dataset.borderColor,
                 borderWidth: dataset.borderWidth,
-                // fontColor: TEXT_COLOR,
                 borderRadius: LEGEND_BOX_BORDER_RADIUS
             }))
         };
-
-        /*const hideDataset = (chart, legendItem, legend) => {
-            // let hidden = chart.data.datasets[0].hidden;
-            hideConsumptionItem(legendItem)
-
-            // return hidden ? chart.update('hide') : chart.update('show');
-        }*/
-
+        
         // Plugins
         const stopHoverEffects = {
             id: 'stopHover',
