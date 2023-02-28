@@ -4,6 +4,7 @@ import { ShowToastEvent } from 'lightning/platformShowToastEvent';
 import ChartJS from '@salesforce/resourceUrl/ChartJS';
 
 // General Config
+const CATEGORIES = ['Technical', 'Industry', 'Product', 'Discipline', 'Solution Engineering', 'Consulting', 'Customer Engagement', 'Sales'];
 const MAX_LEVEL = 5;
 const CHART_TITLE = 'Sum of Rating / Maximum Rating by Skill Category';
 const LEGEND_TITLE = 'Employee:';
@@ -94,7 +95,7 @@ export default class DeveloperCardRadarChart extends LightningElement {
                 borderRadius: LEGEND_BOX_BORDER_RADIUS
             }))
         };
-        
+
         // Plugins
         const stopHoverEffects = {
             id: 'stopHover',
