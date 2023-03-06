@@ -202,7 +202,6 @@ export default class DeveloperCardRadarChart extends LightningElement {
     }
 
     // consistent categories across all graphs
-    // Assume we can boil skills to 6 or so --> Bucket categories into Technical, Strategy, Design, Product
     // Ratio correct, need different formatting to get there
     getTop8Categories(skills) {
         const totalCategories = skills.map(skill => skill.Category__c);
