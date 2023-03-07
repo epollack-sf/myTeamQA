@@ -30,6 +30,8 @@ public with sharing class testController {
     private class SkillDataWrapper {
         // What data? --> One object/skill entry (singlular) vs. one object/user with list of skill entries that have (bulkified)
 
+        // Currently One object/skill entry
+
         @AuraEnabled public String SkillName {get; set;}
         @AuraEnabled public String SkillCategory {get; set;}
         @AuraEnabled public String SkillType {get; set;}
