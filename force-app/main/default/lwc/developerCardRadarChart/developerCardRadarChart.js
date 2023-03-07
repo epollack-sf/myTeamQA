@@ -34,17 +34,15 @@ const MAX = 100;
 export default class DeveloperCardRadarChart extends LightningElement {
     @api employee; // User object to extract info from
     _data;
-    
+
     @api
-    set skills(value) { // expected to be an array of Skill objects: {id: '', Type__c: '', Category__c: '', Name: '', Rating__c: 2}
+    set skills(value) {
         const formattedData = [];
-        const top8Categories = this.getTop8Categories(value);
-        const skillsInTop8 = value.filter(skill => top8Categories.includes(skill.Category__c));
-        
-        for (let category of top8Categories) {
-            formattedData.push({ category: category, ratingInfo: this.getRatingPercentage(skillsInTop8, category) });
+
+        for (let category of CATEGORIES) {
+            formattedData.push({ category: category, ratingInfo: this.getRatingPercentage(value, category) });
         }
-        
+
         this._data = formattedData;
     }
 
@@ -119,7 +117,7 @@ export default class DeveloperCardRadarChart extends LightningElement {
         const data = {
             labels: this.skills.map(entry => entry.category),
             datasets: [{
-                label: `${this.employee.Name}`,
+                label: `${this.employee.FirstName}`,
                 data: this.skills.map(entry => entry.ratingInfo.ratio),
                 borderColor: LINE_COLOR,
                 borderWidth: LINE_WIDTH,
@@ -201,36 +199,18 @@ export default class DeveloperCardRadarChart extends LightningElement {
         const skillChart = new Chart(ctx, config);
     }
 
-    // consistent categories across all graphs
-    // Ratio correct, need different formatting to get there
-    getTop8Categories(skills) {
-        const totalCategories = skills.map(skill => skill.Category__c);
-        const uniqueCategories = Array.from(new Set(totalCategories));
-        
-        if (uniqueCategories.length > 8) {
-            const counts = [];
-            
-            for (let category of uniqueCategories) {
-                counts.push({ category: category, count: totalCategories.filter(c => c === category).length });
-            }
-            counts.sort((a, b) => b.count - a.count);
-            
-            return counts.map(o => o.category).slice(0, 8);
-        }
-
-        return uniqueCategories;
-    }
-
     getRatingPercentage(skills, category) {
-        const entriesByCategory = skills.filter(skill => skill.Category__c === category);
-        
+        const entriesByCategory = skills.filter(skill => skill.SkillType === category);
+
         let numEntries = entriesByCategory.length;
-        let sumRatings = entriesByCategory.map(skill => skill.Rating__c).reduce((acc, currVal) => acc + currVal, 0);
+        let sumRatings = entriesByCategory
+                            .map(skill => parseInt(skill.SkillRating[0]))
+                            .reduce((acc, currVal) => acc + currVal, 0);
 
         return { 
             numEntriesInCategory: numEntries,
             sumRatingsInCategory: sumRatings,
-            ratio: (sumRatings / (MAX_LEVEL * numEntries)) * 100
+            ratio: (sumRatings / (MAX_LEVEL * numEntries)) * 100 || 0
         };
     }
 }

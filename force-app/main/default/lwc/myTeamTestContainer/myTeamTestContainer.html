@@ -1,7 +1,12 @@
 <template>
     <div class="slds-grid">
         <div class="slds-col">
-            <!-- <c-developer-card-radar-chart employee={employee} skills={skills}></c-developer-card-radar-chart> -->
+            <template lwc:if={skills}>
+                <c-developer-card-radar-chart employee={employee} skills={skills}></c-developer-card-radar-chart>
+            </template>
+            <template lwc:else>
+                <lightning-spinner variant="brand" alternative-text="Chart Loading..."></lightning-spinner>
+            </template>
         </div>
         <div class="slds-col">
             <!-- <c-developer-card-radar-chart employee={employee2} skills={skills2}></c-developer-card-radar-chart> -->
