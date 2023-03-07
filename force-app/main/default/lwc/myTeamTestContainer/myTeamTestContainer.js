@@ -9,9 +9,9 @@ export default class MyTeamTestContainer extends LightningElement {
     // should be api (pulled from parent component or LMS)
     employee = {
         FirstName: 'Ayesha',
-        LastName: 'Singh',
+        LastName: 'S.',
         get FullName() {
-            return this.FirstName + this.LastName
+            return `${this.FirstName} ${this.LastName}`
         }
     };
 
