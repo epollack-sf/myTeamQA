@@ -61,17 +61,34 @@ export default class DeveloperCardRadarChart extends LightningElement {
     }
 
     initializeChart() {
+        // Callback Helper Functions
+        const getCategoryData = (targetCategory) => this.skills.find(skill => skill.category === targetCategory);
+        
         // Callbacks
         const getEveryEvenTick = function(value, index) {
             return index % 2 === 0 ? this.getLabelForValue(value) : '';
         };
 
-        const tooltipDescription = (tooltipItems) => {
-            const categoryData = this.skills.find(skill => skill.category === tooltipItems[0].label);
+        const tooltipTitle = (tooltipItems) => {
+            const categoryData = getCategoryData(tooltipItems[0].label);
 
-            return `Number of Skills in Category: ${categoryData.ratingInfo.numEntriesInCategory}\n` +
-                `Total Score in Category: ${categoryData.ratingInfo.sumRatingsInCategory}\n` +
-                `Maximum Possible Score from ${categoryData.ratingInfo.numEntriesInCategory} Skill(s): ${categoryData.ratingInfo.numEntriesInCategory * MAX_LEVEL}`;
+            if (!categoryData.ratingInfo.ratio) {
+                return '';
+            }
+        }
+
+        const tooltipLabel = (tooltipItems) => { // Start here
+            return 'Hello';
+        }
+
+        const tooltipDescription = (tooltipItems) => {
+            const categoryData = getCategoryData(tooltipItems[0].label);
+
+            if (categoryData.ratingInfo.ratio) {
+                return `Number of Skills in Category: ${categoryData.ratingInfo.numEntriesInCategory}\n` +
+                    `Total Score in Category: ${categoryData.ratingInfo.sumRatingsInCategory}\n` +
+                    `Maximum Possible Score from ${categoryData.ratingInfo.numEntriesInCategory} Skill(s): ${categoryData.ratingInfo.numEntriesInCategory * MAX_LEVEL}`;
+            }
         };
 
         const hoverEffects = () => {
@@ -91,7 +108,7 @@ export default class DeveloperCardRadarChart extends LightningElement {
                 strokeStyle: dataset.borderColor,
                 borderWidth: dataset.borderWidth,
                 borderRadius: LEGEND_BOX_BORDER_RADIUS
-            }))
+            }));
         };
 
         // Plugins
@@ -181,6 +198,8 @@ export default class DeveloperCardRadarChart extends LightningElement {
                 tooltip: {
                     events: ['click'],
                     callbacks: {
+                        title: tooltipTitle,
+                        label: tooltipLabel,
                         footer: tooltipDescription
                     }
                 }
