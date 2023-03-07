@@ -3,21 +3,21 @@ public with sharing class testController {
     public static List<SkillDataWrapper> getSkillsForUser(Id userId) {
         try {
             User servicesUser = [
-                SELECT Name, Org62Id__c
+                SELECT Org62Id__c
                 FROM User
                 WHERE Id = :userId
                 LIMIT 1
             ];
 
-            List<SkillDataWrapper> skillsByUser = new List<SkillDataWrapper>();
             List<ProfileSkillUserTax__x> userSkills = [
-                SELECT Expertise_Rating_c__c, ProfileSkillId__r.Name__c, ProfileSkillId__r.Category_c__c, ProfileSkillId__r.Type_c__c
+                SELECT ProfileSkillId__r.Name__c, ProfileSkillId__r.Category_c__c, ProfileSkillId__r.Type_c__c, Expertise_Rating_c__c
                 FROM ProfileSkillUserTax__x
                 WHERE UserId__c = :servicesUser.Org62Id__c
             ];
 
-            for (ProfileSkillUserTax__x psut : userSkills) { // ProfileSkillUserTax__x is needed to get expertise rating
-                skillsByUser.add(new SkillDataWrapper(servicesUser.Name, psut)); // reformat to meet use case
+            List<SkillDataWrapper> skillsByUser = new List<SkillDataWrapper>();
+            for (ProfileSkillUserTax__x userSkill : userSkills) { // ProfileSkillUserTax__x is needed to get expertise rating
+                skillsByUser.add(new SkillDataWrapper(userSkill)); // reformat to meet use case
             }
 
             return skillsByUser;
@@ -28,11 +28,18 @@ public with sharing class testController {
     }
 
     private class SkillDataWrapper {
-        // What data? --> One object/skill entry vs. one object/user with list of skill entries that have
+        // What data? --> One object/skill entry (singlular) vs. one object/user with list of skill entries that have (bulkified)
 
-        public SkillDataWrapper(String name, ProfileSkillUserTax__x userSkill) {
-            this.name = name;
-            this.userSkill = userSkill;
+        @AuraEnabled public String SkillName {get; set;}
+        @AuraEnabled public String SkillCategory {get; set;}
+        @AuraEnabled public String SkillType {get; set;}
+        @AuraEnabled public String SkillRating {get; set;}
+
+        public SkillDataWrapper(ProfileSkillUserTax__x userSkill) {
+            SkillName = userSkill.ProfileSkillId__r.Name__c;
+            SkillCategory = userSkill.ProfileSkillId__r.Category_c__c;
+            SkillType = userSkill.ProfileSkillId__r.Type_c__c;
+            SkillRating = userSkill.Expertise_Rating_c__c;
         }
     }
 }
