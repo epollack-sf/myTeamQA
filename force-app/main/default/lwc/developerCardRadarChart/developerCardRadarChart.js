@@ -12,6 +12,10 @@ const LEGEND_BOX_BORDER_RADIUS = 2;
 const POINT_STYLE = 'rectRot';
 const POINT_HOVER_RADIUS = 5;
 const LINE_WIDTH = 1;
+const TOOLTIP_ALIGNMENT = 'center';
+const TOOLTIP_DIVISION = '----------------------------------';
+const TOOLTIP_FOOTER_MARGIN = 1;
+const DISABLE_CHART_FEATURE = () => null;
 
 // Colors
 const TEXT_COLOR = '#444444';
@@ -23,6 +27,7 @@ const LINE_COLOR = 'rgba(216, 58, 0, 0.8)';
 
 // Fonts
 const FONT_FAMILY = 'sans-serif';
+const NORMAL = '400';
 const BOLD_NORMAL = '600';
 const BOLD = 'bold';
 const BOLDEST = '900';
@@ -69,26 +74,35 @@ export default class DeveloperCardRadarChart extends LightningElement {
             return index % 2 === 0 ? this.getLabelForValue(value) : '';
         };
 
-        const tooltipTitle = (tooltipItems) => {
-            const categoryData = getCategoryData(tooltipItems[0].label);
+        const tooltipLabel = (tooltipItem) => { // Start here
+            const ratio = getCategoryData(tooltipItem.label).ratingInfo.ratio;
 
-            if (!categoryData.ratingInfo.ratio) {
-                return '';
+            return ratio ? `${tooltipItem.label}: ${ratio.toFixed(2)}` : `${tooltipItem.label}: ${ratio}`;
+            
+        };
+
+        const tooltipDivision = (context) => {
+            // console.log('1: ' + context[0].chart.tooltip.width); // width isn't defined until after a click?
+            // console.log('2: ' + context[0].chart.tooltip.width);
+            
+            /*let dashes = ''
+            
+            for (let i=0; i<context.tooltip.width; i++) {
+                dashes += '-';
             }
-        }
 
-        const tooltipLabel = (tooltipItems) => { // Start here
-            return 'Hello';
-        }
+            return dashes;*/
+
+            return TOOLTIP_DIVISION;
+        };
 
         const tooltipDescription = (tooltipItems) => {
-            const categoryData = getCategoryData(tooltipItems[0].label);
+            console.log(tooltipItems);
+            const categoryRatingInfo = getCategoryData(tooltipItems[0].label).ratingInfo;
 
-            if (categoryData.ratingInfo.ratio) {
-                return `Number of Skills in Category: ${categoryData.ratingInfo.numEntriesInCategory}\n` +
-                    `Total Score in Category: ${categoryData.ratingInfo.sumRatingsInCategory}\n` +
-                    `Maximum Possible Score from ${categoryData.ratingInfo.numEntriesInCategory} Skill(s): ${categoryData.ratingInfo.numEntriesInCategory * MAX_LEVEL}`;
-            }
+            return `Number of Skills in Category: ${categoryRatingInfo.numEntriesInCategory}\n` +
+                `Total Score in Category: ${categoryRatingInfo.sumRatingsInCategory}\n` +
+                `Maximum Possible Score from ${categoryRatingInfo.numEntriesInCategory} Skill(s): ${categoryRatingInfo.numEntriesInCategory * MAX_LEVEL}`;
         };
 
         const hoverEffects = () => {
@@ -191,15 +205,23 @@ export default class DeveloperCardRadarChart extends LightningElement {
                         }
                     },
                     labels: {
-                        // onClick: hideDataset,
+                        // onClick: DISABLE_CHART_FEATURE, // sometimes error is thrown legend click when dev tools is open
                         generateLabels: legendLabelGenerator
                     }
                 },
                 tooltip: {
+                    bodyAlign: TOOLTIP_ALIGNMENT,
+                    footerAlign: TOOLTIP_ALIGNMENT,
+                    footerFont: {
+                        weight: NORMAL
+                    },
+                    footerMarginTop: TOOLTIP_FOOTER_MARGIN,
+                    displayColors: false,
                     events: ['click'],
                     callbacks: {
-                        title: tooltipTitle,
+                        title: DISABLE_CHART_FEATURE,
                         label: tooltipLabel,
+                        beforeFooter: tooltipDivision,
                         footer: tooltipDescription
                     }
                 }
