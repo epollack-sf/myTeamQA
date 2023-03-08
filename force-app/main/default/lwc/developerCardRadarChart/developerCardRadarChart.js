@@ -13,7 +13,7 @@ const POINT_STYLE = 'rectRot';
 const POINT_HOVER_RADIUS = 5;
 const LINE_WIDTH = 1;
 const TOOLTIP_ALIGNMENT = 'center';
-const TOOLTIP_DIVISION = '----------------------------------';
+const TOOLTIP_DIVISION = '-----';
 const TOOLTIP_FOOTER_MARGIN = 1;
 const DISABLE_CHART_FEATURE = () => null;
 
@@ -77,27 +77,13 @@ export default class DeveloperCardRadarChart extends LightningElement {
         const tooltipLabel = (tooltipItem) => { // Start here
             const ratio = getCategoryData(tooltipItem.label).ratingInfo.ratio;
 
-            return ratio ? `${tooltipItem.label}: ${ratio.toFixed(2)}` : `${tooltipItem.label}: ${ratio}`;
-            
+            return `${tooltipItem.label}: ${ratio ? ratio.toFixed(2) : ratio}`;
         };
 
-        const tooltipDivision = (context) => {
-            // console.log('1: ' + context[0].chart.tooltip.width); // width isn't defined until after a click?
-            // console.log('2: ' + context[0].chart.tooltip.width);
-            
-            /*let dashes = ''
-            
-            for (let i=0; i<context.tooltip.width; i++) {
-                dashes += '-';
-            }
-
-            return dashes;*/
-
-            return TOOLTIP_DIVISION;
-        };
+        const tooltipDivision = () => TOOLTIP_DIVISION;
 
         const tooltipDescription = (tooltipItems) => {
-            console.log(tooltipItems);
+            console.log(tooltipItems); // array not tooltipItem??
             const categoryRatingInfo = getCategoryData(tooltipItems[0].label).ratingInfo;
 
             return `Number of Skills in Category: ${categoryRatingInfo.numEntriesInCategory}\n` +
